@@ -10,7 +10,7 @@ namespace Soft160.Data.Cryptography
     /// Perf tests : this implemenation is just little bit slower (about 10%) than native CLI C++ fast Crc32 implemenation:
     /// 96 buffers by 128MB (12GB) data - 5.293 seconds vs 4.910 seconds
     /// </summary>
-    public class CRC
+    public static class CRC
     {
         //private static readonly Func<byte[], int, int, uint, uint> ALGORITHM_FUNCTION = BitConverter.IsLittleEndian ? (Func<byte[], int, int, uint, uint>)Crc32LittleEndian : Crc32BigEndian;
 
