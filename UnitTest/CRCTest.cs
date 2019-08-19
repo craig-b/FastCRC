@@ -24,6 +24,22 @@ namespace UnitTest
             }
         }
 
+#if NETCOREAPP3_0
+        [TestMethod]
+        public void DataTestSpan()
+        {
+            string dataFile = "CRC32Data.txt";
+            var testData = LoadTestData(dataFile);
+
+            Assert.AreEqual(1025, testData.Count);
+            for (int i = 0; i < testData.Count; ++i)
+            {
+                uint crc = CRC.Crc32(testData[i].Item1.AsSpan());
+                Assert.AreEqual(testData[i].Item2, crc, $"Line {i}");
+            }
+        }
+#endif
+
         [TestMethod]
         public void Test42()
         {
@@ -33,6 +49,18 @@ namespace UnitTest
             uint crc = CRC.Crc32(Encoding.ASCII.GetBytes(text));
             Assert.AreEqual(textCRC32, crc);
         }
+
+#if NETCOREAPP3_0
+        [TestMethod]
+        public void Test42Span()
+        {
+            string text = "Answer to the Ultimate Question of Life, the Universe, and Everything";
+            uint textCRC32 = 0xf341b721;
+
+            uint crc = CRC.Crc32(Encoding.ASCII.GetBytes(text).AsSpan());
+            Assert.AreEqual(textCRC32, crc);
+        }
+#endif
 
         private static List<Tuple<byte[], uint>> LoadTestData(string dataFile)
         {
