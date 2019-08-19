@@ -14,19 +14,19 @@ namespace Soft160.Data.Cryptography
     {
         //private static readonly Func<byte[], int, int, uint, uint> ALGORITHM_FUNCTION = BitConverter.IsLittleEndian ? (Func<byte[], int, int, uint, uint>)Crc32LittleEndian : Crc32BigEndian;
 
-#if NETSTANDARD2_1
+#if NETCOREAPP2_1
         public static uint Crc32(Span<byte> data, uint previousCrc32 = 0) => Crc32(data, 0, data.Length, previousCrc32);
 #endif
 
         public static uint Crc32(byte[] data, uint previousCrc32 = 0) => Crc32(data, 0, data.Length, previousCrc32);
 
-#if NETSTANDARD2_1
+#if NETCOREAPP2_1
         public static uint Crc32(byte[] data, int offset, int count, uint previousCrc32 = 0) =>
             Crc32(data.AsSpan(), offset, count, previousCrc32);
 #endif
 
         public static uint Crc32(
-#if NETSTANDARD2_1
+#if NETCOREAPP2_1
             Span<byte> data
 #else
             byte[] data
@@ -50,7 +50,7 @@ namespace Soft160.Data.Cryptography
         }
 
         private static uint Crc32LittleEndian(
-#if NETSTANDARD2_1
+#if NETCOREAPP2_1
             Span<byte> data
 #else
             byte[] data
@@ -127,7 +127,7 @@ namespace Soft160.Data.Cryptography
         }
 
         private static uint Crc32BigEndian(
-#if NETSTANDARD2_1
+#if NETCOREAPP2_1
             Span<byte> data
 #else
             byte[] data

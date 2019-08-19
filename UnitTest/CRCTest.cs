@@ -24,7 +24,6 @@ namespace UnitTest
             }
         }
 
-#if NETCOREAPP3_0
         [TestMethod]
         public void DataTestSpan()
         {
@@ -38,7 +37,6 @@ namespace UnitTest
                 Assert.AreEqual(testData[i].Item2, crc, $"Line {i}");
             }
         }
-#endif
 
         [TestMethod]
         public void Test42()
@@ -50,7 +48,6 @@ namespace UnitTest
             Assert.AreEqual(textCRC32, crc);
         }
 
-#if NETCOREAPP3_0
         [TestMethod]
         public void Test42Span()
         {
@@ -60,7 +57,6 @@ namespace UnitTest
             uint crc = CRC.Crc32(Encoding.ASCII.GetBytes(text).AsSpan());
             Assert.AreEqual(textCRC32, crc);
         }
-#endif
 
         private static List<Tuple<byte[], uint>> LoadTestData(string dataFile)
         {
