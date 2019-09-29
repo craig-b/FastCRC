@@ -15,7 +15,7 @@ namespace Soft160.Data.Cryptography
         //private static readonly Func<byte[], int, int, uint, uint> ALGORITHM_FUNCTION = BitConverter.IsLittleEndian ? (Func<byte[], int, int, uint, uint>)Crc32LittleEndian : Crc32BigEndian;
 
 #if NETCOREAPP2_1
-        public static uint Crc32(Span<byte> data, uint previousCrc32 = 0) => Crc32(data, 0, data.Length, previousCrc32);
+        public static uint Crc32(ReadOnlySpan<byte> data, uint previousCrc32 = 0) => Crc32(data, 0, data.Length, previousCrc32);
 #endif
 
         public static uint Crc32(byte[] data, uint previousCrc32 = 0) => Crc32(data, 0, data.Length, previousCrc32);
@@ -25,17 +25,15 @@ namespace Soft160.Data.Cryptography
             Crc32(data.AsSpan(), offset, count, previousCrc32);
 #endif
 
-        public static uint Crc32(
 #if NETCOREAPP2_1
-            Span<byte> data
+        public static uint Crc32(ReadOnlySpan<byte> data, int offset, int count, uint previousCrc32 = 0)
 #else
-            byte[] data
+        public static uint Crc32(byte[] data, int offset, int count, uint previousCrc32 = 0)
 #endif
-            , int offset, int count, uint previousCrc32 = 0)
         {
             if (data == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(data));
             }
             if (offset < 0 || count < 0)
             {
@@ -49,17 +47,15 @@ namespace Soft160.Data.Cryptography
             return BitConverter.IsLittleEndian ? Crc32LittleEndian(data, offset, count, previousCrc32) : Crc32BigEndian(data, offset, count, previousCrc32);
         }
 
-        private static uint Crc32LittleEndian(
 #if NETCOREAPP2_1
-            Span<byte> data
+        private static uint Crc32LittleEndian(ReadOnlySpan<byte> data, int offset, int count, uint previousCrc32)
 #else
-            byte[] data
+        private static uint Crc32LittleEndian(byte[] data, int offset, int count, uint previousCrc32)
 #endif
-            , int offset, int count, uint previousCrc32)
         {
             uint crc = ~previousCrc32; // same as previousCrc32 ^ 0xFFFFFFFF
-            int unroll = 4;
-            int bytesAtOnce = 16 * unroll;
+            const int unroll = 4;
+            const int bytesAtOnce = 16 * unroll;
 
             unsafe
             {
@@ -68,7 +64,7 @@ namespace Soft160.Data.Cryptography
                 {
                     byte* bytePtr = dataPtr + offset;
                     uint* uintPtr = (uint*)bytePtr;
-                    uint* uintEndPtr = uintPtr + (count / bytesAtOnce) * (bytesAtOnce / 4);
+                    uint* uintEndPtr = uintPtr + (count / bytesAtOnce * (bytesAtOnce / 4));
 
                     uint* lookup_1 = lookup_0 + 0x100;
                     uint* lookup_2 = lookup_0 + 0x200;
@@ -95,22 +91,22 @@ namespace Soft160.Data.Cryptography
                             uint two = *uintPtr++;
                             uint three = *uintPtr++;
                             uint four = *uintPtr++;
-                            crc = lookup_0[(four >> 24) & 0xFF] ^
-                                lookup_1[(four >> 16) & 0xFF] ^
-                                lookup_2[(four >> 8) & 0xFF] ^
-                                lookup_3[four & 0xFF] ^
-                                lookup_4[(three >> 24) & 0xFF] ^
-                                lookup_5[(three >> 16) & 0xFF] ^
-                                lookup_6[(three >> 8) & 0xFF] ^
-                                lookup_7[three & 0xFF] ^
-                                lookup_8[(two >> 24) & 0xFF] ^
-                                lookup_9[(two >> 16) & 0xFF] ^
-                                lookup_10[(two >> 8) & 0xFF] ^
-                                lookup_11[two & 0xFF] ^
-                                lookup_12[(one >> 24) & 0xFF] ^
-                                lookup_13[(one >> 16) & 0xFF] ^
-                                lookup_14[(one >> 8) & 0xFF] ^
-                                lookup_15[one & 0xFF];
+                            crc = lookup_0[(four >> 24) & 0xFF]
+                                ^ lookup_1[(four >> 16) & 0xFF]
+                                ^ lookup_2[(four >> 8) & 0xFF]
+                                ^ lookup_3[four & 0xFF]
+                                ^ lookup_4[(three >> 24) & 0xFF]
+                                ^ lookup_5[(three >> 16) & 0xFF]
+                                ^ lookup_6[(three >> 8) & 0xFF]
+                                ^ lookup_7[three & 0xFF]
+                                ^ lookup_8[(two >> 24) & 0xFF]
+                                ^ lookup_9[(two >> 16) & 0xFF]
+                                ^ lookup_10[(two >> 8) & 0xFF]
+                                ^ lookup_11[two & 0xFF]
+                                ^ lookup_12[(one >> 24) & 0xFF]
+                                ^ lookup_13[(one >> 16) & 0xFF]
+                                ^ lookup_14[(one >> 8) & 0xFF]
+                                ^ lookup_15[one & 0xFF];
                         }
                     }
 
@@ -126,17 +122,15 @@ namespace Soft160.Data.Cryptography
             return ~crc; // same as crc ^ 0xFFFFFFFF
         }
 
-        private static uint Crc32BigEndian(
 #if NETCOREAPP2_1
-            Span<byte> data
+        private static uint Crc32BigEndian(ReadOnlySpan<byte> data, int offset, int count, uint previousCrc32)
 #else
-            byte[] data
+        private static uint Crc32BigEndian(byte[] data, int offset, int count, uint previousCrc32)
 #endif
-            , int offset, int count, uint previousCrc32)
         {
             uint crc = ~previousCrc32; // same as previousCrc32 ^ 0xFFFFFFFF
-            int unroll = 4;
-            int bytesAtOnce = 16 * unroll;
+            const int unroll = 4;
+            const int bytesAtOnce = 16 * unroll;
 
             unsafe
             {
@@ -145,7 +139,7 @@ namespace Soft160.Data.Cryptography
                 {
                     byte* bytePtr = dataPtr + offset;
                     uint* uintPtr = (uint*)bytePtr;
-                    uint* uintEndPtr = uintPtr + (count / bytesAtOnce) * (bytesAtOnce / 4);
+                    uint* uintEndPtr = uintPtr + (count / bytesAtOnce * (bytesAtOnce / 4));
 
                     uint* lookup_1 = lookup_0 + 0x100;
                     uint* lookup_2 = lookup_0 + 0x200;
@@ -172,28 +166,28 @@ namespace Soft160.Data.Cryptography
                             uint two = *uintPtr++;
                             uint three = *uintPtr++;
                             uint four = *uintPtr++;
-                            crc = lookup_0[four & 0xFF] ^
-                                lookup_1[(four >> 8) & 0xFF] ^
-                                lookup_2[(four >> 16) & 0xFF] ^
-                                lookup_3[(four >> 24) & 0xFF] ^
-                                lookup_4[three & 0xFF] ^
-                                lookup_5[(three >> 8) & 0xFF] ^
-                                lookup_6[(three >> 16) & 0xFF] ^
-                                lookup_7[(three >> 24) & 0xFF] ^
-                                lookup_8[two & 0xFF] ^
-                                lookup_9[(two >> 8) & 0xFF] ^
-                                lookup_10[(two >> 16) & 0xFF] ^
-                                lookup_11[(two >> 24) & 0xFF] ^
-                                lookup_12[one & 0xFF] ^
-                                lookup_13[(one >> 8) & 0xFF] ^
-                                lookup_14[(one >> 16) & 0xFF] ^
-                                lookup_15[(one >> 24) & 0xFF];
+                            crc = lookup_0[four & 0xFF]
+                                ^ lookup_1[(four >> 8) & 0xFF]
+                                ^ lookup_2[(four >> 16) & 0xFF]
+                                ^ lookup_3[(four >> 24) & 0xFF]
+                                ^ lookup_4[three & 0xFF]
+                                ^ lookup_5[(three >> 8) & 0xFF]
+                                ^ lookup_6[(three >> 16) & 0xFF]
+                                ^ lookup_7[(three >> 24) & 0xFF]
+                                ^ lookup_8[two & 0xFF]
+                                ^ lookup_9[(two >> 8) & 0xFF]
+                                ^ lookup_10[(two >> 16) & 0xFF]
+                                ^ lookup_11[(two >> 24) & 0xFF]
+                                ^ lookup_12[one & 0xFF]
+                                ^ lookup_13[(one >> 8) & 0xFF]
+                                ^ lookup_14[(one >> 16) & 0xFF]
+                                ^ lookup_15[(one >> 24) & 0xFF];
                         }
                     }
 
                     // remaining 1 to 63 bytes (standard algorithm)
                     int restBytes = count % bytesAtOnce;
-                    for (int i = (count / bytesAtOnce) * bytesAtOnce; i < count;)
+                    for (int i = count / bytesAtOnce * bytesAtOnce; i < count;)
                     {
                         crc = (crc >> 8) ^ lookup_0[(crc & 0xFF) ^ bytePtr[i++]];
                     }
@@ -203,13 +197,15 @@ namespace Soft160.Data.Cryptography
             return ~crc; // same as crc ^ 0xFFFFFFFF
         }
 
+        /// <summary>
         /// swap endianess
+        /// </summary>
         internal static uint Swap(uint x)
         {
-            return (x >> 24) |
-                ((x >> 8) & 0x0000FF00) |
-                ((x << 8) & 0x00FF0000) |
-                (x << 24);
+            return (x >> 24)
+                | ((x >> 8) & 0x0000FF00)
+                | ((x << 8) & 0x00FF0000)
+                | (x << 24);
         }
 
         private static readonly uint[] Crc32Lookup = new uint[]

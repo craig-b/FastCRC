@@ -16,10 +16,11 @@ namespace Soft160.Data.Cryptography
             HashSizeValue = 32;
         }
 
-        protected override void HashCore(byte[] array, int ibStart, int cbSize)
-        {
-            seed = CRC.Crc32(array, ibStart, cbSize, seed);
-        }
+        protected override void HashCore(byte[] array, int ibStart, int cbSize) => seed = CRC.Crc32(array, ibStart, cbSize, seed);
+
+#if NETCOREAPP2_1
+        protected override void HashCore(ReadOnlySpan<byte> source) => seed = CRC.Crc32(source);
+#endif
 
         protected override byte[] HashFinal()
         {
