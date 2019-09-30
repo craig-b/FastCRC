@@ -5,13 +5,14 @@
     <RootNamespace>Soft160.Data.Cryptography</RootNamespace>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyName>Soft160.Data.Cryptography</AssemblyName>
-    <PackageId>CRC.Fast.Net</PackageId>
+    <PackageId>CRC.Fast.Net.Core</PackageId>
     <Authors>Yuri Babich</Authors>
     <Product>Fast CRC dotnet Library</Product>
     <Description>Really fast CRC implementation.
-It's faster than popular CRC Nuget packages 1.5-20 times</Description>
+It's faster than popular CRC Nuget packages 1.5-20 times
+With support for Span&lt;T&gt;</Description>
     <Copyright>Yuri Babich</Copyright>
-    <PackageProjectUrl>https://github.com/yubabich/FastCRC</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/craig-b/FastCRC</PackageProjectUrl>
     <PackageTags>CRC, CRC32, Fast CRC</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>1.0.0</Version>
